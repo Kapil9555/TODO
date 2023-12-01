@@ -2,6 +2,7 @@
 import { Box, Button, Grid, InputBase, Paper, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import axios from 'axios';
 
 const LoginPage = () => {
     const router = useRouter();
@@ -15,10 +16,31 @@ const LoginPage = () => {
         setLoginData({...loginData,[name]:value})
     }
 
-    const registerHandler=()=>{
-        router.push('/register')
+    const verfiyUser=async()=>{
+        if(loginData.email !== '' && loginData.password !== ''){
+            try{
+                const resp = await axios.post('/api/verifyuser',loginData)
+                console.log(resp)
+                if(resp.data.message == "Login Verified"){
+                   const respJson = JSON.stringify(resp.data.resp.tid)
+                   await localStorage.setItem('tid',respJson)
+                   router.push('/')
+                }
+                else{
+                    alert(resp.data.message)
+                }        
+            }
+            catch(err){
+              console.log(err);
+              alert(err)
+            }
+        }
     };
     console.log(loginData)
+
+    const registerHandler =()=>{
+        router.push('/signup')
+    }
     return (
         <>
             <Grid container sx={{ display: 'flex', justifyContent: 'center', alignItems: {lg:'center', md:'center', sm:'center', xs:'flex-start'}, height: '100vh', bgcolor: '#c4c4c4' }}>
@@ -50,9 +72,9 @@ const LoginPage = () => {
                                 <Grid container sx={{  display:'flex', justifyContent:'center', alignItems:'center'}}>
                                     <Grid item xs={10} sx={{ mt:{lg:'50px', md:'45px', sm:'40px', xs:'30px'}}}>
                                     <Box sx={{width:'100%'}}>
-                                        <Button variant='contained' sx={{bgcolor:'#03015d', width:'100%',fontSize:'15px','&:hover':{bgcolor:'#03015d'} }} size='large'>Login</Button>
+                                        <Button variant='contained' sx={{bgcolor:'#03015d', width:'100%',fontSize:'15px','&:hover':{bgcolor:'#03015d'} }} size='large' onClick={verfiyUser}>Login</Button>
                                     </Box>
-                                    <Typography sx={{fontSize:'13px',color:'#8b8b8b', mt:'15px'}}>Forgot your password ? <b style={{color:'#03015d', fontSize:'13.5px'}}>Forgot Password</b></Typography>
+                                    <Typography sx={{fontSize:'13px',color:'#8b8b8b', mt:'15px',cursor:"pointer"}} >Forgot your password ? <b style={{color:'#03015d', fontSize:'13.5px'}}>Forgot Password</b></Typography>
                                     </Grid>
                                 </Grid>
 

@@ -6,7 +6,9 @@ import { Box, Grid, Icon, Paper, Typography } from '@mui/material'
 import Image from 'next/image'
 import { useState } from 'react'
 import logo from '../public/logo.png'
-import { Roboto } from 'next/font/google';
+import { Roboto } from 'next/font/google'
+import { useRouter } from 'next/navigation'
+
 
 
 
@@ -16,8 +18,24 @@ const roboto4 = Roboto({
     display:"swap"
   })
 
-const Header = () => {
+const Header = ({list}) => {
+    const router = useRouter()
     const [arrow, setArrow]= useState(false)
+
+const handleNavigate =()=>{
+    if(list=='home'){
+        router.push('/')
+    }
+    else{
+        router.push('/profile')
+    }
+}
+
+const handleNavigateLog =async()=>{
+     await localStorage.removeItem('tid')
+    router.push('/login')
+}
+
   return (
     <>
     <Grid container sx={{borderBottom:"1px solid #e0e0e0"}}>
@@ -41,11 +59,11 @@ const Header = () => {
                       <KeyboardArrowUpIcon sx={{display:!arrow ?"none":"block"}}/>
                      <KeyboardArrowDownIcon sx={{display:arrow ?"none":"block"}}/>
                    </Icon>
-                   <Paper elevation={3} sx={{display:arrow ?"flex":"none",alignItems:"space-between",flexDirection:"column",justifyContent:"center",position:"absolute",width:"100%",height:"70px",top:"26px"}}>
-                       <Typography align='center' sx={{fontSize:"13px",userSelect:"none",cursor:"pointer",fontWeight:"bold",color:"#bdbdbd"}}>
-                          Profile
+                   <Paper elevation={3} sx={{display:arrow ?"flex":"none",alignItems:"space-between",flexDirection:"column",position:"absolute",width:"100%",top:"26px"}}>
+                       <Typography align='center' sx={{fontSize:"13px",userSelect:"none",cursor:"pointer",textTransform:"capitalize",fontWeight:"bold",color:"#bdbdbd",'&:hover':{bgcolor:"#eeeeee"},p:"8px 5px"}} onClick={handleNavigate}>
+                          {list}
                        </Typography>
-                       <Typography align='center' sx={{fontSize:"13px",userSelect:"none",cursor:"pointer",fontWeight:"bold",color:"#bdbdbd",mt:"10px"}}>
+                       <Typography align='center' sx={{fontSize:"13px",userSelect:"none",cursor:"pointer",fontWeight:"bold",'&:hover':{bgcolor:"#eeeeee"},color:"#bdbdbd",p:"8px 5px"}} onClick={handleNavigateLog}>
                           Logout
                        </Typography>
                    </Paper>

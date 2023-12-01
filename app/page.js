@@ -1,5 +1,8 @@
+'use client'
 import HomePage from "@/components/HomePage";
 import { Roboto } from "next/font/google";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 
 const roboto = Roboto({
@@ -13,6 +16,12 @@ const roboto2 = Roboto({
   display:"swap"
 })
 export default function Home() {
+     const router = useRouter()
+  useEffect(()=>{
+    if(!localStorage.getItem('tid')){
+        router.push('/login')
+    }
+  },[])
   
   return (
     <>
