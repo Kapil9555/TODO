@@ -34,7 +34,7 @@ const MiddlePartHome = () => {
     const [snackOpen , setSnackOpen]=useState({
         open:false,
         message:"",
-        color:""
+       
       })
 
     const filters = [
@@ -111,10 +111,10 @@ const MiddlePartHome = () => {
         <NewTaskModal open={open} setOpen={setOpen}  snackOpen={snackOpen} setSnackOpen={setSnackOpen}/>
        
         <Snackbar open={snackOpen.open} autoHideDuration={2000} onClose={handleCloseSnack}>
-        <Alert onClose={handleCloseSnack} sx={{ width:'100%',bgcolor:snackOpen.color,color:"white"}}>
-            {snackOpen.message}
-        </Alert>
-      </Snackbar>
+          <Alert onClose={handleCloseSnack} severity="success"  sx={{ width:'100%'}}>
+             {snackOpen.message}
+          </Alert>
+        </Snackbar>
          </>
     )
 }

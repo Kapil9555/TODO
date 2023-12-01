@@ -12,6 +12,8 @@ import { useContext, useEffect, useState } from 'react';
 import LibraryAddCheckIcon from '@mui/icons-material/LibraryAddCheck';
 import BeenhereOutlinedIcon from '@mui/icons-material/BeenhereOutlined';
 import { context } from '@/Global/GlobalContext';
+import BeenhereIcon from '@mui/icons-material/Beenhere';
+import { CleaningServices } from '@mui/icons-material';
 
 
 const roboto = Roboto({
@@ -24,94 +26,123 @@ const roboto2 = Roboto({
     subsets: ['latin'],
     display: "swap"
 })
-const TaskList = ({  setOpen,snackOpen , setSnackOpen,title }) => {
-      const {state,fetchData}= useContext(context)
-      const [filterData,setFilterData]=useState([])
+const TaskList = ({ setOpen, snackOpen, setSnackOpen, title }) => {
+    const { state, fetchData } = useContext(context)
+    const [filterData, setFilterData] = useState([])
 
 
-    const handleDelete =async(id)=>{
-        try{
-             const respData = await axios.delete(`/api/newtask/${id}`);
-             console.log(respData)
-             if(respData.data.message == 'Deleted Successfully'){
+
+    const handleDelete = async (id) => {
+        try {
+            const respData = await axios.delete(`/api/newtask/${id}`);
+            console.log(respData)
+            if (respData.data.message == 'Deleted Successfully') {
                 fetchData();
-                 setSnackOpen({...snackOpen,open:true,message:respData.data.message,color:"#2e7d32"})
-             }
+                setSnackOpen({ ...snackOpen, open: true, message: respData.data.message, color: "#2e7d32" })
+            }
         }
-        catch(err){
+        catch (err) {
             console.log(err)
             alert(err)
         }
     }
-   const fetchFilteredData=()=>{
-    console.log("first",title)
-        if(title == "All Tasks"){
+    const fetchFilteredData = () => {
+        console.log("first", title)
+        if (title == "All Tasks") {
             console.log(state.allData)
             console.log("first running")
             setFilterData(state.allData)
         }
 
-        if(title == "In Progress"){
+        if (title == "In Progress") {
             // console.log(item)
-            const filteredData = state.allData.filter((ele)=>{return ele.isCompleted == false});
-          
+            const filteredData = state.allData.filter((ele) => { return ele.isCompleted == false });
+
             setFilterData(filteredData)
-            
+
         }
-        if(title == "Completed"){
-            const filteredData = state.allData.filter((ele)=>{return ele.isCompleted == true});
-           
+        if (title == "Completed") {
+            const filteredData = state.allData.filter((ele) => { return ele.isCompleted == true });
+
             setFilterData(filteredData)
-            
+
         }
-        if(title == "Today"){
-            
-            const filteredData = state.allData.filter((ele)=>{
+        if (title == "Today") {
+
+            const filteredData = state.allData.filter((ele) => {
                 const date = new Date(ele.date).getDate();
                 const year = new Date(ele.date).getFullYear();
-                const month = new Date(ele.date).getMonth()+1;
-                  
-                if(date == new Date().getDate() && year == new Date().getFullYear() && month == new Date().getMonth()+1){
-                    return ele};
-                })
-            
-                setFilterData(filteredData)
-           
+                const month = new Date(ele.date).getMonth() + 1;
+
+                if (date == new Date().getDate() && year == new Date().getFullYear() && month == new Date().getMonth() + 1) {
+                    return ele
+                };
+            })
+
+            setFilterData(filteredData)
+
         }
 
-        if(title == "Tommorow"){
-            const filteredData = state.allData.filter((ele)=>{
+        if (title == "Tommorow") {
+            const filteredData = state.allData.filter((ele) => {
                 const date = new Date(ele.date).getDate();
                 const year = new Date(ele.date).getFullYear();
-                const month = new Date(ele.date).getMonth()+1;
-                if(date == new Date().getDate()+1 && year == new Date().getFullYear() && month == new Date().getMonth()+1){
-                    return ele};
-                });
-                setFilterData(filteredData)
+                const month = new Date(ele.date).getMonth() + 1;
+                if (date == new Date().getDate() + 1 && year == new Date().getFullYear() && month == new Date().getMonth() + 1) {
+                    return ele
+                };
+            });
+            setFilterData(filteredData)
         }
-        if(title == "Month"){
-            const filteredData = state.allData.filter((ele)=>{
+        if (title == "Month") {
+            const filteredData = state.allData.filter((ele) => {
                 const year = new Date(ele.date).getFullYear();
-                const month = new Date(ele.date).getMonth()+1;
+                const month = new Date(ele.date).getMonth() + 1;
                 // console.log(year,month)
-                if(year == new Date().getFullYear() && month == new Date().getMonth()+1){
-                    return ele};
-                });
-                setFilterData(filteredData)
+                if (year == new Date().getFullYear() && month == new Date().getMonth() + 1) {
+                    return ele
+                };
+            });
+            setFilterData(filteredData)
         }
-   }
+    }
 
-//    console.log("filter filter",title)
+    const handleUpdate = async (id, name) => {
+        try {
+            if (name == 'comp') {
+                const respData = await axios.patch(`/api/iscompleted/${id}`, { isCompleted: false })
+                console.log(respData)
+                if(respData.data.message == "Task Updated Successfully"){
+                    fetchData();
+                }
+            }
+            if (name == 'ncomp') {
+                const respData = await axios.patch(`/api/iscompleted/${id}`, { isCompleted: true })
+                console.log(respData)
+                if(respData.data.message == "Task Updated Successfully"){
+                    fetchData();
+                }
+            }
+        }
+        catch (err) {
+            alert(err.message);
+            console.log(err.message)
+        }
 
-    useEffect(()=>{
+
+    }
+
+
+
+    useEffect(() => {
         fetchFilteredData();
-    },[title,state])
+    }, [title, state])
 
     // console.log(filterData)
     return (
         <>
             <Grid item xs={11} sm={8} md={9.5} lg={9.5}>
-                <Box sx={{ m:{ lg:"30px",md:"30px",sm:"15px",xs:"15px"} }}>
+                <Box sx={{ m: { lg: "30px", md: "30px", sm: "15px", xs: "15px" } }}>
                     <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                         <Box>
                             <Typography className={roboto.className} sx={{ fontSize: "35px", color: "#332a7c" }}>
@@ -128,8 +159,9 @@ const TaskList = ({  setOpen,snackOpen , setSnackOpen,title }) => {
                     <Grid container sx={{ mt: "40px" }} spacing={2}>
                         {
                             filterData.map((ele, index) => {
+                                {/* console.log(ele) */}
                                 const date = new Date(ele.date).getDate();
-                                const month = new Date(ele.date).getMonth()+1;
+                                const month = new Date(ele.date).getMonth() + 1;
                                 const year = new Date(ele.date).getFullYear();
                                 {/* console.log("ele date",new Date(ele.date))
                                 console.log("new date",new Date()) */}
@@ -137,7 +169,7 @@ const TaskList = ({  setOpen,snackOpen , setSnackOpen,title }) => {
                                 return <Grid key={index} item lg={3} md={4} sm={6} xs={12}>
                                     <Paper sx={{ p: "10px", borderRadius: "14px" }} elevation={3}>
                                         <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-                                            <Typography sx={{ color: "#616161",textTransform:"capitalize", fontSize: "16px", fontFamily: 'cursive' }}>
+                                            <Typography sx={{ color: "#616161", textTransform: "capitalize", fontSize: "16px", fontFamily: 'cursive' }}>
                                                 {ele.title}
                                             </Typography>
                                             <Icon>
@@ -160,9 +192,11 @@ const TaskList = ({  setOpen,snackOpen , setSnackOpen,title }) => {
                                                 <AssistantPhotoIcon sx={{ fontSize: "19px", cursor: "pointer", color: ele.importance == 'High' ? "red" : ele.importance == 'Medium' ? "orange" : "green" }} />
 
                                             </Icon>
-                                            <Icon sx={{ ml: "8px" }}>
-
+                                            <Icon sx={{ ml: "8px", display: ele.isCompleted ? "none" : "block" }} onClick={() => { handleUpdate(ele._id, 'ncomp') }}>
                                                 <BeenhereOutlinedIcon sx={{ fontSize: "18px", cursor: "pointer", mt: "3px" }} />
+                                            </Icon>
+                                            <Icon sx={{ ml: "8px", display: ele.isCompleted ? "block" : "none" }} onClick={() => { handleUpdate(ele._id, 'comp') }}>
+                                                <BeenhereIcon sx={{ fontSize: "18px", cursor: "pointer", mt: "3px" }} />
                                             </Icon>
                                         </Box>
                                     </Paper>
@@ -173,7 +207,7 @@ const TaskList = ({  setOpen,snackOpen , setSnackOpen,title }) => {
                     </Grid>
                 </Box>
             </Grid>
-         
+
         </>
     )
 }
